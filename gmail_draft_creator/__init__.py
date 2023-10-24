@@ -96,7 +96,10 @@ def _extract_credentials():
 
 def create_draft(email, template_string, template_params, subject=None, dry_run=False):
     creds = _extract_credentials()
-    service = build("gmail", "v1", credentials=creds)
+    # set cache_discovery=False per:
+    # https://github.com/googleapis/google-api-python-client/
+    #                       issues/299#issuecomment-268915510
+    service = build("gmail", "v1", credentials=creds, cache_discovery=False)
 
     template_subject, template_string = _process_template_string(template_string)
 
