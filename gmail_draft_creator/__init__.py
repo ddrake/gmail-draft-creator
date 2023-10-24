@@ -111,9 +111,14 @@ def create_draft(email, template_string, template_params, subject=None, dry_run=
 
     # remove <p> and </p> tags if they are on the first line
     # this causes weird formatting in gmail
-    first_line, remaining_text = message_text.split("\n", 1)
-    first_line = re.sub(r"^<p>(.*)</p>$", r"\1", first_line)
-    message_text = first_line + "\n" + remaining_text
+    parts = message_text.split("\n", 1)
+    if len(parts) == 2:
+        first_line, remaining_text = parts
+        first_line = re.sub(r"^<p>(.*)</p>$", r"\1", first_line)
+        message_text = first_line + "\n" + remaining_text
+    else:
+        # message_text is just one line
+        message_text = re.sub(r"^<p>(.*)</p>$", r"\1", message_text)
 
     message = MIMEMultipart("alternative")
     message["to"] = email
