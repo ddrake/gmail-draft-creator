@@ -11,7 +11,6 @@ from string import Template
 import click
 import markdown
 from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
@@ -24,19 +23,23 @@ SCOPES = [
 
 
 @click.command()
-@click.option("--csv", "csv_file_path", type=click.Path(exists=True), help="Path to the CSV file.", required=True)
+@click.option("--csv", "csv_file_path", type=click.Path(exists=True),
+              help="Path to the CSV file.", required=True)
 @click.option(
-    "--template", "template_file_path", type=click.Path(exists=True), help="Path to the template file.", required=True
+    "--template", "template_file_path", type=click.Path(exists=True),
+    help="Path to the template file.", required=True
 )
-@click.option("--subject", "subject", type=str, help="Subject for the email drafts.", required=False)
-@click.option("--dry-run", is_flag=True, default=False, help="Run script without creating drafts.")
+@click.option("--subject", "subject", type=str,
+              help="Subject for the email drafts.", required=False)
+@click.option("--dry-run", is_flag=True, default=False,
+              help="Run script without creating drafts.")
 def send_drafts_from_csv_cli(csv_file_path, template_file_path, subject, dry_run):
     send_drafts_from_csv(csv_file_path, template_file_path, subject, dry_run)
 
 
 def _process_template_string(raw_template_string):
-    # if the first line in the file starts with "Subject: " pull that into a separate variable
-    # and remove it from the template string
+    # if the first line in the file starts with "Subject: "
+    # pull that into a separate variable and remove it from the template string
     first_line = raw_template_string.split("\n")[0]
 
     if first_line.startswith("Subject: "):
@@ -122,7 +125,7 @@ def create_draft(email, template_string, template_params, subject=None, dry_run=
     body = {"message": {"raw": raw_message}}
 
     if not dry_run:
-        draft = service.users().drafts().create(userId="me", body=body).execute()
+        service.users().drafts().create(userId="me", body=body).execute()
 
     logging.info(f"draft created for email: {email}")
 
