@@ -6,3 +6,4 @@ credentials.json
 /*.csv
 /template*
 env
+__pycache__
